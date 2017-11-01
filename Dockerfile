@@ -1,7 +1,5 @@
 FROM kaixhin/cuda-torch:7.5
 
-ADD start.sh /start.sh
-
 # fetch fast neural style
 RUN git clone --depth 1 https://github.com/jcjohnson/fast-neural-style.git \
     && luarocks install torch \
@@ -12,15 +10,19 @@ RUN git clone --depth 1 https://github.com/jcjohnson/fast-neural-style.git \
     && luarocks install cunn \
     && luarocks install cudnn \
     && luarocks install camera \
-    && luarocks install qtlua \
-    && cd fast-neural-style && bash models/download_style_transfer_models.sh \
+    && luarocks install qtlua
+
+RUN cd fast-neural-style && bash models/download_style_transfer_models.sh \
     && apt-get update \
-    && apt-get -y install openssh-server \
+    && apt-get -y install openssh-server figlet vim \
     && rm -rf /var/lib/apt/lists/*
 
 RUN sed -i'' -e 's/^\(PermitRootLogin \).*/\1yes/' /etc/ssh/sshd_config \
-    && echo "root:root" | chpasswd
+    && echo "root:p" | chpasswd \
+    && echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/nvidia/lib/' >> /root/.bashrc
     # && echo -e "root\nroot\n" | passwd
+
+ADD start.sh /start.sh
 
 WORKDIR /root/torch/fast-neural-style
 

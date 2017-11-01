@@ -2,7 +2,7 @@ LOCAL_IMAGE=$(USER)/fast-neural-style
 
 .PHONY: build clean run
 
-build: clean
+build:
 	docker build -t $(LOCAL_IMAGE) .
 
 clean:
@@ -10,6 +10,6 @@ clean:
 
 run:
 	-docker rm -f fns || true
-	nvidia-docker run --name fns --device=/dev/video0 -it $(LOCAL_IMAGE)
+	nvidia-docker run -d --name fns --device=/dev/video0 $(LOCAL_IMAGE)
 	sleep 2
-	ssh -X root@`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' fns` "cd /root/torch/fast-neural-style/ && /root/torch/install/bin/qlua webcam_demo.lua -models models/eccv16/starry_night.t7 -gpu 0"
+	ssh -X -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' fns` "cd /root/torch/fast-neural-style/ && /root/torch/install/bin/qlua webcam_demo.lua -models models/eccv16/starry_night.t7 -gpu 0"
