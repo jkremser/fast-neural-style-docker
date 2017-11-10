@@ -1,6 +1,6 @@
 FROM kaixhin/cuda-torch:7.5
 
-# fetch fast neural style
+# this step takes ages so let's make a layer from it
 RUN git clone --depth 1 https://github.com/jcjohnson/fast-neural-style.git \
     && luarocks install torch \
     && luarocks install nn \
@@ -18,11 +18,13 @@ RUN cd fast-neural-style && bash models/download_style_transfer_models.sh \
     && rm -rf /var/lib/apt/lists/*
 
 RUN sed -i'' -e 's/^\(PermitRootLogin \).*/\1yes/' /etc/ssh/sshd_config \
+    && sed -i'' -e "s/^\(\[ -z \"\$PS1\".*\)/#\1/" /root/.bashrc \
     && echo "root:p" | chpasswd \
-    && echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/nvidia/lib/' >> /root/.bashrc
-    # && echo -e "root\nroot\n" | passwd
+    && echo 'source /exports.sh' >> /root/.bashrc
 
 ADD start.sh /start.sh
+ADD webcam.sh /webcam.sh
+ADD exports.sh /exports.sh
 
 WORKDIR /root/torch/fast-neural-style
 
