@@ -1,4 +1,4 @@
-FROM kaixhin/cuda-torch:7.5
+FROM kaixhin/cuda-torch:8.0
 
 # this step takes ages so let's make a layer from it
 RUN git clone --depth 1 https://github.com/jcjohnson/fast-neural-style.git \
@@ -10,7 +10,8 @@ RUN git clone --depth 1 https://github.com/jcjohnson/fast-neural-style.git \
     && luarocks install cunn \
     && luarocks install cudnn \
     && luarocks install camera \
-    && luarocks install qtlua
+    && luarocks install qtlua \
+    && /root/torch/update.sh
 
 RUN cd fast-neural-style && bash models/download_style_transfer_models.sh \
     && apt-get update \
