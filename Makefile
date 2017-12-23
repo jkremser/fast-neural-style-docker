@@ -1,4 +1,4 @@
-LOCAL_IMAGE=$(USER)/fast-neural-style:demo
+LOCAL_IMAGE=$(USER)/fast-neural-style:working
 SSH_PARAMS=-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' fns`
 SSH_RUN_COMMAND=ssh -X $(SSH_PARAMS)
 
@@ -12,7 +12,7 @@ clean:
 
 run-cont:
 	-docker rm -f fns || true
-	nvidia-docker run --rm -d --name fns2 --device=/dev/video0 $(LOCAL_IMAGE)
+	nvidia-docker run --rm -d --name fns --device=/dev/video0 $(LOCAL_IMAGE)
 	sleep 1
 
 attach:
