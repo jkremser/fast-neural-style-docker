@@ -25,6 +25,8 @@ RUN sed -i'' -e 's/^\(PermitRootLogin \).*/\1yes/' /etc/ssh/sshd_config \
 
 ADD start.sh /start.sh
 ADD webcam.sh /webcam.sh
+ADD common.sh /common.sh
+ADD trainer.sh /trainer.sh
 ADD exports.sh /exports.sh
 
 WORKDIR /root/torch/fast-neural-style
